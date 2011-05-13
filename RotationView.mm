@@ -25,6 +25,7 @@ drawGLString(GLfloat x, GLfloat y, GLfloat z, const char *string)
 
 
 @implementation RotationView
+@synthesize mesh = _mesh;
 
 - (id)initWithFrame:(NSRect)frame {
 	NSLog(@"initWithFrame");
@@ -40,6 +41,7 @@ drawGLString(GLfloat x, GLfloat y, GLfloat z, const char *string)
 	//here we cant use OpenGL;
 	NSLog(@"awake From nib(OpenGL)");
 	_mouseDragging = false;
+	_mesh = false;
 }
 
 
@@ -200,6 +202,7 @@ drawGLString(GLfloat x, GLfloat y, GLfloat z, const char *string)
 		glVertex3f( -halfLen, halfLen, -halfLen);	
 	}glEnd();
 	
+	
 	glBegin(GL_LINES);{
 		glVertex3f(-halfLen, -halfLen, halfLen);
 		glVertex3f( -halfLen, -halfLen, -halfLen);
@@ -249,8 +252,15 @@ drawGLString(GLfloat x, GLfloat y, GLfloat z, const char *string)
 	glEnable(GL_DEPTH_TEST);	//隠面消去
 	glMatrixMode(GL_MODELVIEW);
 
+	if (_mesh){
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}else{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+	
 	glPushMatrix();{
 		glMultMatrixf(m);
+		
 		[self drawCube];
 		
 		glutSolidTeapot(0.2);
@@ -278,7 +288,7 @@ drawGLString(GLfloat x, GLfloat y, GLfloat z, const char *string)
 }
 
 - (void)mouseDown:(NSEvent *)theEvent{
-	NSLog(@"mouse down. click count = %d", [theEvent clickCount]);
+	NSLog(@"mouse down. click count = %ld", [theEvent clickCount]);
 	_mouseDragging = true;
 	_prevDragPoint = [self pointFromEvent:theEvent];
 }
@@ -312,11 +322,10 @@ drawGLString(GLfloat x, GLfloat y, GLfloat z, const char *string)
 	//[self rotate:3.0f forX:-angleY forY:angleX forZ:0];
 	_prevDragPoint = curPoint;
 	
-	//if (NSPointInRect(curPoint, [self bounds])){
 }
 
 - (void)rightMouseDown:(NSEvent *)theEvent{
-	NSLog(@"right mouse down. click count = %d", [theEvent clickCount]);
+	NSLog(@"right mouse down. click count = %ld", [theEvent clickCount]);
 	_mouseDragging = true;
 	_prevDragPoint = [self pointFromEvent:theEvent];
 }
@@ -346,6 +355,9 @@ drawGLString(GLfloat x, GLfloat y, GLfloat z, const char *string)
 	//[self mouseDragged: theEvent];
 }
 
-
+-(void)setMesh:(Boolean)mesh{
+	_mesh = mesh;
+	[self setNeedsDisplay:YES];
+}
 
 @end

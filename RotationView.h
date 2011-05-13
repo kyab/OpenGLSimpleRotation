@@ -12,7 +12,9 @@
 @interface RotationView : NSOpenGLView {
 	bool _mouseDragging;
 	NSPoint _prevDragPoint;
-
+	Boolean _mesh;
 }
 -(void)rotate:(float)angle forX:(float)x forY:(float)y forZ:(float)z;
+
+@property(assign)Boolean mesh;
 @end
